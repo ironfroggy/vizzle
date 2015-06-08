@@ -1,0 +1,75 @@
+<!doctype html>
+<style>
+    #c {
+        width: 512px;
+        height: 512px;
+    }
+    #j {
+        width: 512px;
+        height: 256px;
+    }
+</style>
+<canvas id=c width=128 height=128></canvas>
+<textarea id=j></textarea>
+<script>
+var j = document.getElementById('j');
+var ctx = document.getElementById('c').getContext('2d');
+var t = 0;
+ctx.rect(0, 0, 128, 128);
+ctx.fillStyle = "grey";
+ctx.fill();
+
+setInterval(function(){
+    var pixels = ctx.getImageData(0, 0, 128, 128);
+    var data = pixels.data;
+
+    function getPixel(x, y) {
+
+    }
+
+    for (var i = 0; i < data.length; i += 4) {
+        var x = i % (128*4);
+        var y = parseInt(i / 128);
+        var r = pixelFunction(t, x, y, data.subarray(i, i+4));
+        data[i] = r[0];
+        data[i+1] = r[1];
+        data[i+2] = r[2];
+        data[i+3] = 255;
+    }
+    ctx.putImageData(pixels, 0, 0);
+
+    t++;
+}, 1000/30);
+
+function dist(fx, fy, tx, ty) {
+    var dx = Math.abs(fx - tx);
+    var dy = Math.abs(fy - ty);
+    dx = Math.pow(dx, 2);
+    dy = Math.pow(dy, 2);
+    return Math.sqrt(dx + dy);
+}
+
+function pixelFunction(t, x, y, pixel) {
+    var d = 10;
+    var h = d/2;
+    pixel[0] = parseInt(255*Math.sin(t/dist(x, y, 256, 200)));
+    pixel[1] = parseInt(255*Math.cos((t+25)/dist(x, y, 200, 256)));
+    pixel[2] = parseInt(255*Math.tan((t+50)/dist(x, y, 300, 256)));
+
+    return pixel;
+}
+
+j.value = pixelFunction.toString();
+console.log(j.value);
+j.onkeyup = function() {
+    var code = j.value;
+    try {
+        var func = eval("("+code+")");
+        if (typeof func === "function") {
+            pixelFunction = func;
+        }
+    } catch (e) {
+        //
+    }
+}
+</script>
