@@ -50,11 +50,11 @@ function dist(fx, fy, tx, ty) {
 }
 
 function pixelFunction(t, x, y, pixel) {
-    var d = 10;
-    var h = d/2;
-    pixel[0] = parseInt(255*Math.sin(t/dist(x, y, 256, 200)));
-    pixel[1] = parseInt(255*Math.cos((t+25)/dist(x, y, 200, 256)));
-    pixel[2] = parseInt(255*Math.tan((t+50)/dist(x, y, 300, 256)));
+    var a = 20, b = 150;
+
+    pixel[0] = parseInt(255-255*Math.cos(t/a+dist(x, y, 0, 0)/b));
+    pixel[1] = parseInt(255-255*Math.cos(t/a+dist(x, y, 512, 0)/b));
+    pixel[2] = parseInt(255-255*Math.cos(t/a+dist(x, y, 256, 512)/b));
 
     return pixel;
 }
