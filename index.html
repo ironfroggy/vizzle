@@ -19,27 +19,39 @@ ctx.rect(0, 0, 128, 128);
 ctx.fillStyle = "grey";
 ctx.fill();
 
-setInterval(function(){
-    var pixels = ctx.getImageData(0, 0, 128, 128);
-    var data = pixels.data;
+var so = 0;
+var somax = 1;
 
-    function getPixel(x, y) {
+requestAnimationFrame(function(){
+    try {
+        var pixels = ctx.getImageData(0, 0, 128, 128);
+        var data = pixels.data;
 
+        function getPixel(x, y) {
+
+        }
+
+        for (var i = 0; i < data.length; i += (4*(so+1))) {
+            var x = i % (128*4);
+            var y = parseInt(i / 128);
+            var r = pixelFunction(t, x, y, data.subarray(i, i+4));
+            data[i] = r[0];
+            data[i+1] = r[1];
+            data[i+2] = r[2];
+            data[i+3] = 255;
+        }
+        so += 1;
+        if (so === somax) {
+            so = 0;
+        }
+        ctx.putImageData(pixels, 0, 0);
+    } catch (e) {
+        console.log(e);
     }
-
-    for (var i = 0; i < data.length; i += 4) {
-        var x = i % (128*4);
-        var y = parseInt(i / 128);
-        var r = pixelFunction(t, x, y, data.subarray(i, i+4));
-        data[i] = r[0];
-        data[i+1] = r[1];
-        data[i+2] = r[2];
-        data[i+3] = 255;
-    }
-    ctx.putImageData(pixels, 0, 0);
 
     t++;
-}, 1000/30);
+    requestAnimationFrame(arguments.callee);
+});
 
 function dist(fx, fy, tx, ty) {
     var dx = Math.abs(fx - tx);
